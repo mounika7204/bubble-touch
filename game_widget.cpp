@@ -1,11 +1,16 @@
 #include <cassert>
 #include <iostream>
+#include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
 
 #include "config.hpp"
 #include "game_widget.hpp"
+#include "mark_detection.hpp"
 
 GameWidget::GameWidget()
     : Gtk::Box {}
+    , mBlueMarkDetection(BLUE_MARK_MIN_HSV, BLUE_MARK_MAX_HSV)
+    , mGreenMarkDetection(GREEN_MARK_MIN_HSV, GREEN_MARK_MAX_HSV)
 {
   mImageBox.pack_start(mImage);
   add(mImageBox);
@@ -20,6 +25,20 @@ bool GameWidget::updateVideoFrame() noexcept
   if (!mCamera.read()) {
     std::cerr << "error: failed to read camera frame\n";
     return false;
+  }
+
+  auto& frame = mCamera.frame();
+
+  // TODO: Use rectangles to check for collisions in game.
+
+  if (auto blueMark = mBlueMarkDetection.findMark(frame.clone()); blueMark) {
+    auto color = cv::Scalar(255, 0, 0);
+    cv::rectangle(frame, blueMark->tl(), blueMark->br(), color, 2);
+  }
+
+  if (auto greenMark = mGreenMarkDetection.findMark(frame.clone()); greenMark) {
+    auto color = cv::Scalar(0, 255, 0);
+    cv::rectangle(frame, greenMark->tl(), greenMark->br(), color, 2);
   }
 
   auto pixbuf = mCamera.getFrameAsPixbuf();
