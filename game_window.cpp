@@ -6,8 +6,8 @@
 GameWindow::GameWindow()
     : mBox { Gtk::ORIENTATION_VERTICAL }
     , mInformationBox { Gtk::ORIENTATION_HORIZONTAL }
-    , mPlayer1PtsLabel { "Player 1: 0" }
-    , mPlayer2PtsLabel { "Player 2: 0" }
+    , mPlayerOneScore { "Player 1" }
+    , mPlayerTwoScore { "Player 2" }
     , mGame { std::make_unique<Game>() }
 {
   set_title("BubbleTouch Game");
@@ -16,9 +16,9 @@ GameWindow::GameWindow()
   setRemainingTimeLabelText();
   mGame->timeDecreasedSlot().connect([&]() { setRemainingTimeLabelText(); });
 
-  mInformationBox.pack_end(mPlayer2PtsLabel);
+  mInformationBox.pack_end(mPlayerTwoScore);
   mInformationBox.pack_end(mRemainingTimeLabel);
-  mInformationBox.pack_end(mPlayer1PtsLabel);
+  mInformationBox.pack_end(mPlayerOneScore);
 
   mBox.pack_end(mGameWidget);
   mBox.pack_end(mInformationBox);
