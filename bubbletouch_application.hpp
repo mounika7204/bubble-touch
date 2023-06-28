@@ -3,17 +3,23 @@
 #include <gtkmm.h>
 #include <memory>
 
+#include "game_window.hpp"
 #include "initial_window.hpp"
 
 class BubbleTouchApplication : public Gtk::Application {
-  public:
+public:
   BubbleTouchApplication();
 
   static std::shared_ptr<BubbleTouchApplication> create();
 
-  protected:
+protected:
   void on_activate() override;
 
-  private:
+private:
+  void startGame() noexcept;
+
+  void onHideGameWindow() noexcept;
+
   InitialWindow mInitialWindow;
+  GameWindow* mGameWindow = nullptr;
 };

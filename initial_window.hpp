@@ -3,19 +3,18 @@
 #include <gtkmm.h>
 
 class InitialWindow : public Gtk::ApplicationWindow {
-  public:
+public:
   InitialWindow();
 
   virtual ~InitialWindow() { }
-
-  void onStartClicked();
 
   sigc::signal<void> startSignal();
 
   sigc::signal<void> exitSignal();
 
-  private:
-  Gtk::Button mButton;
+private:
+  Gtk::Button mStartButton;
+  Gtk::Button mExitButton;
   Gtk::Image mImage;
   Gtk::Box mBox;
   Gtk::Label mLabel;

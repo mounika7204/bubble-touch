@@ -14,8 +14,29 @@ std::shared_ptr<BubbleTouchApplication> BubbleTouchApplication::create()
 
 void BubbleTouchApplication::on_activate()
 {
-  mInitialWindow.startSignal().connect([]() { std::cout << "Comenzando\n"; });
+  mInitialWindow.startSignal().connect([&]() { startGame(); });
+  mInitialWindow.exitSignal().connect([&]() { quit(); });
 
   add_window(mInitialWindow);
   mInitialWindow.present();
+}
+
+void BubbleTouchApplication::startGame() noexcept
+{
+  if (mGameWindow) {
+    return;
+  }
+
+  mGameWindow = new GameWindow;
+  mGameWindow->signal_hide().connect([&]() { onHideGameWindow(); });
+  add_window(*mGameWindow);
+  mGameWindow->present();
+}
+
+void BubbleTouchApplication::onHideGameWindow() noexcept
+{
+  if (mGameWindow) {
+    delete mGameWindow;
+    mGameWindow = nullptr;
+  }
 }

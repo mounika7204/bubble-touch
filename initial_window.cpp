@@ -6,7 +6,8 @@
 #include "initial_window.hpp"
 
 InitialWindow::InitialWindow()
-    : mButton("Comenzar")
+    : mExitButton("Salir")
+    , mStartButton("Comenzar")
     , mButtonBox(Gtk::ORIENTATION_VERTICAL, 5)
     , mLabel("¡Haz clic para empezar!")
 {
@@ -22,11 +23,16 @@ InitialWindow::InitialWindow()
   mLabel.set_margin_left(10);
   mLabel.set_margin_right(10);
 
-  mButton.set_halign(Gtk::Align::ALIGN_CENTER);
-  mButton.set_valign(Gtk::Align::ALIGN_CENTER);
-  mButton.signal_clicked().connect([&]() { mStartSignal.emit(); });
+  mExitButton.signal_clicked().connect([&]() { mExitSignal.emit(); });
+  mStartButton.signal_clicked().connect([&]() { mStartSignal.emit(); });
 
-  mButtonBox.pack_end(mButton);
+  mButtonBox.set_vexpand(false);
+  mButtonBox.set_valign(Gtk::Align::ALIGN_CENTER);
+  mButtonBox.set_margin_left(5);
+  mButtonBox.set_margin_right(5);
+
+  mButtonBox.pack_end(mExitButton);
+  mButtonBox.pack_end(mStartButton);
   mButtonBox.pack_end(mLabel);
 
   mBox.pack_start(mImage);
