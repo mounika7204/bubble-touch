@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iostream>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 
@@ -20,17 +21,28 @@ std::optional<cv::Rect> MarkDetection::findMark(cv::Mat orig) noexcept
   cv::Mat mask;
   cv::inRange(hsv, mMin, mMax, mask);
 
-  // TODO: Apply morphological operations to get rid of noise
+  // Apply morphological operations to get rid of noise
+  cv::Mat kernel(3, 3, CV_8U, cv::Scalar(3));
+  cv::morphologyEx(mask, mask, cv::MORPH_OPEN, kernel);
 
   // Find the contours
   std::vector<std::vector<cv::Point>> contours;
   cv::findContours(mask, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
+
+  if (contours.empty()) {
+    return {};
+  }
+
   std::sort(contours.begin(), contours.end(), [](auto cnt1, auto cnt2) {
     return cv::contourArea(cnt1) > cv::contourArea(cnt2);
   });
 
   // Find the bounding rect
   cv::Rect boundingRect = cv::boundingRect(contours[0]);
+
+  if (boundingRect.width * boundingRect.height < 2000) {
+    return {};
+  }
 
   return boundingRect;
 }
