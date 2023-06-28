@@ -1,7 +1,9 @@
 #pragma once
 
-#include <gtkmm.h>
 #include <memory>
+
+#include <gtkmm.h>
+#include <opencv2/core.hpp>
 
 #include "game.hpp"
 #include "game_widget.hpp"
@@ -9,9 +11,7 @@
 
 class GameWindow : public Gtk::Window {
 public:
-  GameWindow();
-
-  [[nodiscard]] static std::shared_ptr<GameWindow> create() noexcept;
+  GameWindow(cv::RNG& rng);
 
   virtual ~GameWindow() { }
 
@@ -26,6 +26,4 @@ private:
   PlayerScoreWidget mPlayerTwoScore;
   Gtk::Label mRemainingTimeLabel;
   GameWidget mGameWidget;
-
-  std::unique_ptr<Game> mGame;
 };

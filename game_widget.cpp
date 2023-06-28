@@ -7,15 +7,38 @@
 #include "game_widget.hpp"
 #include "mark_detection.hpp"
 
-GameWidget::GameWidget()
+GameWidget::GameWidget(cv::RNG& rng)
     : Gtk::Box {}
     , mBlueMarkDetection(Config::the().playerOneMinHsv(), Config::the().playerOneMaxHsv())
     , mGreenMarkDetection(Config::the().playerTwoMinHsv(), Config::the().playerTwoMaxHsv())
 {
   mImageBox.pack_start(mImage);
   add(mImageBox);
+
   assert(mCamera.open() && "failed to open camera");
+  assert(mCamera.read() && "failed to read first frame");
+
+  mImageRows = mCamera.frame().rows;
+  mImageCols = mCamera.frame().cols;
+
+  mGame = std::make_unique<Game>(rng, mImageRows, mImageCols);
+
   add_tick_callback([&](const Glib::RefPtr<Gdk::FrameClock>&) { return updateVideoFrame(); });
+}
+
+Game& GameWidget::game() noexcept
+{
+  return *mGame;
+}
+
+int GameWidget::imageRows() const noexcept
+{
+  return mImageRows;
+}
+
+int GameWidget::imageCols() const noexcept
+{
+  return mImageCols;
 }
 
 bool GameWidget::updateVideoFrame() noexcept
@@ -41,6 +64,8 @@ bool GameWidget::updateVideoFrame() noexcept
     cv::rectangle(frame, greenMark->tl(), greenMark->br(), color, 2);
   }
 
+  drawBubbles(frame);
+
   auto pixbuf = mCamera.getFrameAsPixbuf();
   auto width  = Config::the().windowWidth();
   auto height = (pixbuf->get_height() * width) / pixbuf->get_width();
@@ -51,4 +76,12 @@ bool GameWidget::updateVideoFrame() noexcept
   queue_resize();
 
   return true;
+}
+
+void GameWidget::drawBubbles(cv::Mat& frame) noexcept
+{
+  auto& bubbles = mGame->bubbles();
+  for (auto& bubble : bubbles) {
+    cv::circle(frame, cv::Point(bubble.x(), bubble.y()), bubble.radius(), bubble.color(), -1);
+  }
 }

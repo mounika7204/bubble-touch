@@ -3,18 +3,18 @@
 #include "config.hpp"
 #include "game_window.hpp"
 
-GameWindow::GameWindow()
+GameWindow::GameWindow(cv::RNG& rng)
     : mBox { Gtk::ORIENTATION_VERTICAL }
     , mInformationBox { Gtk::ORIENTATION_HORIZONTAL }
     , mPlayerOneScore { "Player 1" }
     , mPlayerTwoScore { "Player 2" }
-    , mGame { std::make_unique<Game>() }
+    , mGameWidget { rng }
 {
   set_title("BubbleTouch Game");
   set_default_size(Config::the().windowWidth(), Config::the().windowHeight());
 
+  mGameWidget.game().timeDecreasedSlot().connect([&]() { setRemainingTimeLabelText(); });
   setRemainingTimeLabelText();
-  mGame->timeDecreasedSlot().connect([&]() { setRemainingTimeLabelText(); });
 
   mInformationBox.pack_end(mPlayerTwoScore);
   mInformationBox.pack_end(mRemainingTimeLabel);
@@ -28,13 +28,8 @@ GameWindow::GameWindow()
   show_all();
 }
 
-std::shared_ptr<GameWindow> GameWindow::create() noexcept
-{
-  return std::make_shared<GameWindow>();
-}
-
 void GameWindow::setRemainingTimeLabelText() noexcept
 {
-  auto text = std::to_string(mGame->remainingTimeInSeconds()) + "s";
+  auto text = std::to_string(mGameWidget.game().remainingTimeInSeconds()) + "s";
   mRemainingTimeLabel.set_text(text);
 }

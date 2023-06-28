@@ -1,7 +1,9 @@
 #pragma once
 
-#include <gtkmm.h>
 #include <memory>
+
+#include <gtkmm.h>
+#include <opencv2/core.hpp>
 
 #include "game_window.hpp"
 #include "initial_window.hpp"
@@ -20,6 +22,7 @@ private:
 
   void onHideGameWindow() noexcept;
 
+  cv::RNG mRng;
   InitialWindow mInitialWindow;
   GameWindow* mGameWindow = nullptr;
 };

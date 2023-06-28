@@ -4,6 +4,7 @@
 
 BubbleTouchApplication::BubbleTouchApplication()
     : Gtk::Application("io.github.aloussase.bubbletouch")
+    , mRng(0xFFFFFFFF) // TODO: I might want this to be injected.
 {
 }
 
@@ -27,7 +28,7 @@ void BubbleTouchApplication::startGame() noexcept
     return;
   }
 
-  mGameWindow = new GameWindow;
+  mGameWindow = new GameWindow(mRng);
   mGameWindow->signal_hide().connect([&]() { onHideGameWindow(); });
   add_window(*mGameWindow);
   mGameWindow->present();
