@@ -9,8 +9,8 @@
 
 GameWidget::GameWidget()
     : Gtk::Box {}
-    , mBlueMarkDetection(BLUE_MARK_MIN_HSV, BLUE_MARK_MAX_HSV)
-    , mGreenMarkDetection(GREEN_MARK_MIN_HSV, GREEN_MARK_MAX_HSV)
+    , mBlueMarkDetection(Config::the().playerOneMinHsv(), Config::the().playerOneMaxHsv())
+    , mGreenMarkDetection(Config::the().playerTwoMinHsv(), Config::the().playerTwoMaxHsv())
 {
   mImageBox.pack_start(mImage);
   add(mImageBox);
@@ -42,7 +42,7 @@ bool GameWidget::updateVideoFrame() noexcept
   }
 
   auto pixbuf = mCamera.getFrameAsPixbuf();
-  auto width  = APP_WINDOW_WIDTH;
+  auto width  = Config::the().windowWidth();
   auto height = (pixbuf->get_height() * width) / pixbuf->get_width();
 
   pixbuf = pixbuf->scale_simple(width, height, Gdk::INTERP_BILINEAR);

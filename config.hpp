@@ -1,12 +1,27 @@
 #pragma once
 
-#define APP_WINDOW_WIDTH  800
-#define APP_WINDOW_HEIGHT 500
+#include <opencv2/core.hpp>
 
-#define STARTSCREEN_IMAGE_FILE_NAME "assets/startscreen.png"
+class Config final {
+public:
+  static Config& the();
 
-#define BLUE_MARK_MIN_HSV cv::Scalar(90, 50, 70)
-#define BLUE_MARK_MAX_HSV cv::Scalar(128, 255, 255)
+  [[nodiscard]] int windowHeight() const noexcept;
 
-#define GREEN_MARK_MIN_HSV cv::Scalar(36, 50, 70)
-#define GREEN_MARK_MAX_HSV cv::Scalar(89, 255, 255)
+  [[nodiscard]] int windowWidth() const noexcept;
+
+  [[nodiscard]] std::string startScreenImageFile() const noexcept;
+
+  [[nodiscard]] cv::Scalar playerOneMinHsv() const noexcept;
+
+  [[nodiscard]] cv::Scalar playerOneMaxHsv() const noexcept;
+
+  [[nodiscard]] cv::Scalar playerTwoMinHsv() const noexcept;
+
+  [[nodiscard]] cv::Scalar playerTwoMaxHsv() const noexcept;
+
+private:
+  Config() = default;
+
+  static Config* instance;
+};

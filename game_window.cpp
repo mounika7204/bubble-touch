@@ -11,7 +11,7 @@ GameWindow::GameWindow()
     , mGame { std::make_unique<Game>() }
 {
   set_title("BubbleTouch Game");
-  set_default_size(APP_WINDOW_WIDTH, APP_WINDOW_HEIGHT);
+  set_default_size(Config::the().windowWidth(), Config::the().windowHeight());
 
   setRemainingTimeLabelText();
   mGame->timeDecreasedSlot().connect([&]() { setRemainingTimeLabelText(); });

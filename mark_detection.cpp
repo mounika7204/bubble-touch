@@ -40,7 +40,7 @@ std::optional<cv::Rect> MarkDetection::findMark(cv::Mat orig) noexcept
   // Find the bounding rect
   cv::Rect boundingRect = cv::boundingRect(contours[0]);
 
-  if (boundingRect.width * boundingRect.height < 2000) {
+  if (boundingRect.width * boundingRect.height < 1000) {
     return {};
   }
 
