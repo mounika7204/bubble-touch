@@ -14,6 +14,8 @@ add_executable(bubbletouch
     initial_window.cpp
     bubbletouch_application.cpp
     game_window.cpp
-    game.cpp)
+    game.cpp
+    videocamera.cpp
+    game_widget.cpp)
 target_include_directories(bubbletouch PRIVATE ${GTKMM_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
 target_link_libraries(bubbletouch ${GTKMM_LIBRARIES} ${OpenCV_LIBS})

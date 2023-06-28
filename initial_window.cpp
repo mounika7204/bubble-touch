@@ -28,8 +28,7 @@ InitialWindow::InitialWindow()
 
   mButtonBox.set_vexpand(false);
   mButtonBox.set_valign(Gtk::Align::ALIGN_CENTER);
-  mButtonBox.set_margin_left(5);
-  mButtonBox.set_margin_right(5);
+  mButtonBox.set_halign(Gtk::Align::ALIGN_CENTER);
 
   mButtonBox.pack_end(mExitButton);
   mButtonBox.pack_end(mStartButton);

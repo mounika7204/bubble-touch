@@ -20,7 +20,8 @@ GameWindow::GameWindow()
   mInformationBox.pack_end(mRemainingTimeLabel);
   mInformationBox.pack_end(mPlayer1PtsLabel);
 
-  mBox.pack_start(mInformationBox);
+  mBox.pack_end(mGameWidget);
+  mBox.pack_end(mInformationBox);
 
   add(mBox);
 
