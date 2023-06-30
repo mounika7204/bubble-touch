@@ -102,6 +102,7 @@ void Game::checkCollisionsWithPlayer(
     if (result == cv::INTERSECT_PARTIAL || result == cv::INTERSECT_FULL) {
       player.increaseScore();
       playerScoredSignal.emit(player.score());
+      newBubbles.push_back(generateRandomBubble());
     } else {
       newBubbles.push_back(bubble);
     }
