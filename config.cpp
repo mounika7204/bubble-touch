@@ -30,7 +30,9 @@ cv::Scalar PlayerConfig::maxHsv() const noexcept
 Config* Config::instance = nullptr;
 
 Config::Config()
-    : mPlayerOneConfig { cv::Scalar(255, 0, 0), cv::Scalar(90, 50, 70), cv::Scalar(128, 255, 255) }
+    : mWindowHeight { 500 }
+    , mWindowWidth { 800 }
+    , mPlayerOneConfig { cv::Scalar(255, 0, 0), cv::Scalar(90, 50, 70), cv::Scalar(128, 255, 255) }
     , mPlayerTwoConfig { cv::Scalar(0, 255, 0), cv::Scalar(36, 50, 70), cv::Scalar(89, 255, 255) }
 {
   auto configFile = findConfigFile();
@@ -41,6 +43,12 @@ Config::Config()
   auto root = YAML::LoadFile(configFile.value());
   if (!root) {
     return;
+  }
+
+  if (root["window"]) {
+    // TODO: Add validation.
+    mWindowHeight = root["window"]["height"].as<int>();
+    mWindowWidth  = root["window"]["width"].as<int>();
   }
 
   if (root["playerOne"]) {
@@ -99,12 +107,12 @@ Config& Config::the()
 
 int Config::windowHeight() const noexcept
 {
-  return 500;
+  return mWindowHeight;
 }
 
 int Config::windowWidth() const noexcept
 {
-  return 800;
+  return mWindowWidth;
 }
 
 std::string Config::startScreenImageFile() const noexcept

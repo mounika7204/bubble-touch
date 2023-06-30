@@ -44,6 +44,9 @@ private:
 
   static Config* instance;
 
+  int mWindowHeight;
+  int mWindowWidth;
+
   PlayerConfig mPlayerOneConfig;
   PlayerConfig mPlayerTwoConfig;
 };
