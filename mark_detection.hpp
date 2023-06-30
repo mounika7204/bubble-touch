@@ -8,7 +8,7 @@ class MarkDetection final {
 public:
   MarkDetection(cv::Scalar min, cv::Scalar max);
 
-  std::optional<cv::Rect> findMark(cv::Mat orig) noexcept;
+  std::optional<cv::RotatedRect> findMark(const cv::Mat& orig) noexcept;
 
 private:
   cv::Scalar mMin;

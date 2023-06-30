@@ -13,8 +13,18 @@ GameWindow::GameWindow(cv::RNG& rng)
   set_title("BubbleTouch Game");
   set_default_size(Config::the().windowWidth(), Config::the().windowHeight());
 
-  mGameWidget.game().timeDecreasedSlot().connect([&]() { setRemainingTimeLabelText(); });
-  setRemainingTimeLabelText();
+  mGameWidget.game().timeDecreasedSignal().connect(
+      sigc::mem_fun(*this, &GameWindow::setRemainingTimeLabelText)
+  );
+  setRemainingTimeLabelText(mGameWidget.game().remainingTimeInSeconds());
+
+  mGameWidget.game().playerOneScoredSignal().connect(
+      sigc::mem_fun(mPlayerOneScore, &PlayerScoreWidget::setPlayerScore)
+  );
+
+  mGameWidget.game().playerTwoScoredSignal().connect(
+      sigc::mem_fun(mPlayerTwoScore, &PlayerScoreWidget::setPlayerScore)
+  );
 
   mInformationBox.pack_end(mPlayerTwoScore);
   mInformationBox.pack_end(mRemainingTimeLabel);
@@ -28,8 +38,8 @@ GameWindow::GameWindow(cv::RNG& rng)
   show_all();
 }
 
-void GameWindow::setRemainingTimeLabelText() noexcept
+void GameWindow::setRemainingTimeLabelText(int remainingTimeInSeconds) noexcept
 {
-  auto text = std::to_string(mGameWidget.game().remainingTimeInSeconds()) + "s";
+  auto text = std::to_string(remainingTimeInSeconds) + "s";
   mRemainingTimeLabel.set_text(text);
 }

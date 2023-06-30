@@ -16,9 +16,7 @@ public:
   virtual ~GameWindow() { }
 
 private:
-  [[nodiscard]] bool decreaseRemainingTime() noexcept;
-
-  void setRemainingTimeLabelText() noexcept;
+  void setRemainingTimeLabelText(int) noexcept;
 
   Gtk::Box mBox;
   Gtk::Box mInformationBox;

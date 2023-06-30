@@ -18,6 +18,8 @@ public:
 
   [[nodiscard]] cv::Scalar color() const noexcept;
 
+  [[nodiscard]] cv::RotatedRect asRotatedRect() const noexcept;
+
 private:
   Bubble(int xpos, int ypos, int radius, cv::Scalar color);
 

@@ -11,7 +11,7 @@ MarkDetection::MarkDetection(cv::Scalar min, cv::Scalar max)
 {
 }
 
-std::optional<cv::Rect> MarkDetection::findMark(cv::Mat orig) noexcept
+std::optional<cv::RotatedRect> MarkDetection::findMark(const cv::Mat& orig) noexcept
 {
   // Change to the HSV color space
   cv::Mat hsv;
@@ -38,11 +38,11 @@ std::optional<cv::Rect> MarkDetection::findMark(cv::Mat orig) noexcept
   });
 
   // Find the bounding rect
-  cv::Rect boundingRect = cv::boundingRect(contours[0]);
+  cv::RotatedRect rect = cv::minAreaRect(contours[0]);
 
-  if (boundingRect.width * boundingRect.height < 1000) {
+  if (rect.size.area() < 1000) {
     return {};
   }
 
-  return boundingRect;
+  return rect;
 }

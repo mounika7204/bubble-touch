@@ -16,59 +16,58 @@ GameWidget::GameWidget(cv::RNG& rng)
           Config::the().playerTwo().minHsv(), Config::the().playerTwo().maxHsv()
       )
 {
-  mImageBox.pack_start(mImage);
-  add(mImageBox);
-
   assert(mCamera.open() && "failed to open camera");
   assert(mCamera.read() && "failed to read first frame");
 
-  mImageRows = mCamera.frame().rows;
-  mImageCols = mCamera.frame().cols;
+  mImageBox.pack_start(mImage);
+  add(mImageBox);
 
-  mGame = std::make_unique<Game>(rng, mImageRows, mImageCols);
+  mGame = std::make_unique<Game>(rng, mCamera.frame().rows, mCamera.frame().cols);
 
-  add_tick_callback([&](const Glib::RefPtr<Gdk::FrameClock>&) { return updateVideoFrame(); });
+  add_tick_callback([&](const Glib::RefPtr<Gdk::FrameClock>&) { return onFrame(); });
 }
 
-Game& GameWidget::game() noexcept
+const Game& GameWidget::game() const noexcept
 {
   return *mGame;
 }
 
-int GameWidget::imageRows() const noexcept
+bool GameWidget::onFrame() noexcept
 {
-  return mImageRows;
+  update();
+  draw();
+  queue_resize();
+  return true;
 }
 
-int GameWidget::imageCols() const noexcept
-{
-  return mImageCols;
-}
-
-bool GameWidget::updateVideoFrame() noexcept
+void GameWidget::update() noexcept
 {
   assert(mCamera.isOpen() && "camera is not opened");
+  assert(mCamera.read() && "failed to read camera frame");
 
-  if (!mCamera.read()) {
-    std::cerr << "error: failed to read camera frame\n";
-    return false;
+  mPlayerOneMark = mPlayerOneMarkDetection.findMark(mCamera.frame());
+  mPlayerTwoMark = mPlayerTwoMarkDetection.findMark(mCamera.frame());
+
+  if (mPlayerOneMark) {
+    mGame->checkCollisionsWithPlayerOne(mPlayerOneMark.value());
   }
 
+  if (mPlayerTwoMark) {
+    mGame->checkCollisionsWithPlayerTwo(mPlayerTwoMark.value());
+  }
+}
+
+void GameWidget::draw() noexcept
+{
   auto& frame = mCamera.frame();
   cv::Mat canvas(frame.rows, frame.cols, frame.type(), cv::Scalar(255, 255, 255));
 
-  // TODO: Use rectangles to check for collisions in game.
-
-  if (auto playerOneMark = mPlayerOneMarkDetection.findMark(frame.clone()); playerOneMark) {
-    cv::rectangle(
-        canvas, playerOneMark->tl(), playerOneMark->br(), Config::the().playerOne().color(), -1
-    );
+  if (mPlayerOneMark) {
+    drawRotatedRect(canvas, Config::the().playerOne().color(), mPlayerOneMark.value());
   }
 
-  if (auto playerTwoMark = mPlayerTwoMarkDetection.findMark(frame.clone()); playerTwoMark) {
-    cv::rectangle(
-        canvas, playerTwoMark->tl(), playerTwoMark->br(), Config::the().playerTwo().color(), -1
-    );
+  if (mPlayerTwoMark) {
+    drawRotatedRect(canvas, Config::the().playerTwo().color(), mPlayerTwoMark.value());
   }
 
   drawBubbles(canvas);
@@ -83,10 +82,21 @@ bool GameWidget::updateVideoFrame() noexcept
 
   pixbuf = pixbuf->scale_simple(width, height, Gdk::INTERP_BILINEAR);
   mImage.set(pixbuf->flip());
+}
 
-  queue_resize();
+void GameWidget::drawRotatedRect(
+    cv::Mat& frame, const cv::Scalar& color, cv::RotatedRect& rect
+) noexcept
+{
+  cv::Point2f vertices2f[4];
+  rect.points(vertices2f);
 
-  return true;
+  cv::Point vertices[4];
+  for (int i = 0; i < 4; i++) {
+    vertices[i] = vertices2f[i];
+  }
+
+  cv::fillConvexPoly(frame, vertices, 4, color);
 }
 
 void GameWidget::drawBubbles(cv::Mat& frame) noexcept

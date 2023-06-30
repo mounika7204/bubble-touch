@@ -15,27 +15,29 @@ public:
 
   virtual ~GameWidget() { }
 
-  [[nodiscard]] int imageRows() const noexcept;
-
-  [[nodiscard]] int imageCols() const noexcept;
-
-  [[nodiscard]] Game& game() noexcept;
+  [[nodiscard]] const Game& game() const noexcept;
 
 private:
-  [[nodiscard]] bool updateVideoFrame() noexcept;
+  [[nodiscard]] bool onFrame() noexcept;
+
+  void update() noexcept;
+
+  void draw() noexcept;
+
+  void drawRotatedRect(cv::Mat& frame, const cv::Scalar& color, cv::RotatedRect& rect) noexcept;
 
   void drawBubbles(cv::Mat& frame) noexcept;
 
   VideoCamera mCamera;
+
+  std::optional<cv::RotatedRect> mPlayerOneMark;
+  std::optional<cv::RotatedRect> mPlayerTwoMark;
 
   MarkDetection mPlayerOneMarkDetection;
   MarkDetection mPlayerTwoMarkDetection;
 
   Gtk::Image mImage;
   Gtk::Box mImageBox;
-
-  int mImageRows;
-  int mImageCols;
 
   std::unique_ptr<Game> mGame;
 };

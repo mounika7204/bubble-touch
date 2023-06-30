@@ -22,7 +22,8 @@ add_executable(bubbletouch
     player_score_widget.cpp
     mark_detection.cpp
     config.cpp
-    bubble.cpp)
+    bubble.cpp
+    player.cpp)
 target_include_directories(bubbletouch PRIVATE 
     ${GTKMM_INCLUDE_DIRS} 
     ${OpenCV_INCLUDE_DIRS})

@@ -38,3 +38,12 @@ cv::Scalar Bubble::color() const noexcept
 {
   return mColor;
 }
+
+cv::RotatedRect Bubble::asRotatedRect() const noexcept
+{
+  return cv::RotatedRect {
+    cv::Point(mXpos, mYpos),
+    cv::Size(mRadius * 2, mRadius * 2),
+    0,
+  };
+}
