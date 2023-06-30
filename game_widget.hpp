@@ -27,11 +27,15 @@ private:
   void drawBubbles(cv::Mat& frame) noexcept;
 
   VideoCamera mCamera;
-  MarkDetection mBlueMarkDetection;
-  MarkDetection mGreenMarkDetection;
+
+  MarkDetection mPlayerOneMarkDetection;
+  MarkDetection mPlayerTwoMarkDetection;
+
   Gtk::Image mImage;
   Gtk::Box mImageBox;
+
   int mImageRows;
   int mImageCols;
+
   std::unique_ptr<Game> mGame;
 };

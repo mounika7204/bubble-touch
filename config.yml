@@ -1,0 +1,19 @@
+window:
+  height: 500
+  width: 800
+playerOne:
+  color:
+    red: 0
+    green: 0
+    blue: 255
+  hue:
+    min: 90
+    max: 128
+playerTwo:
+  color:
+    red: 255
+    green: 0
+    blue: 0
+  hue:
+    min: 159
+    max: 180

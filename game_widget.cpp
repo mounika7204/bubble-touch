@@ -9,8 +9,12 @@
 
 GameWidget::GameWidget(cv::RNG& rng)
     : Gtk::Box {}
-    , mBlueMarkDetection(Config::the().playerOneMinHsv(), Config::the().playerOneMaxHsv())
-    , mGreenMarkDetection(Config::the().playerTwoMinHsv(), Config::the().playerTwoMaxHsv())
+    , mPlayerOneMarkDetection(
+          Config::the().playerOne().minHsv(), Config::the().playerOne().maxHsv()
+      )
+    , mPlayerTwoMarkDetection(
+          Config::the().playerTwo().minHsv(), Config::the().playerTwo().maxHsv()
+      )
 {
   mImageBox.pack_start(mImage);
   add(mImageBox);
@@ -51,22 +55,29 @@ bool GameWidget::updateVideoFrame() noexcept
   }
 
   auto& frame = mCamera.frame();
+  cv::Mat canvas(frame.rows, frame.cols, frame.type(), cv::Scalar(255, 255, 255));
 
   // TODO: Use rectangles to check for collisions in game.
 
-  if (auto blueMark = mBlueMarkDetection.findMark(frame.clone()); blueMark) {
-    auto color = cv::Scalar(255, 0, 0);
-    cv::rectangle(frame, blueMark->tl(), blueMark->br(), color, 2);
+  if (auto playerOneMark = mPlayerOneMarkDetection.findMark(frame.clone()); playerOneMark) {
+    cv::rectangle(
+        canvas, playerOneMark->tl(), playerOneMark->br(), Config::the().playerOne().color(), -1
+    );
   }
 
-  if (auto greenMark = mGreenMarkDetection.findMark(frame.clone()); greenMark) {
-    auto color = cv::Scalar(0, 255, 0);
-    cv::rectangle(frame, greenMark->tl(), greenMark->br(), color, 2);
+  if (auto playerTwoMark = mPlayerTwoMarkDetection.findMark(frame.clone()); playerTwoMark) {
+    cv::rectangle(
+        canvas, playerTwoMark->tl(), playerTwoMark->br(), Config::the().playerTwo().color(), -1
+    );
   }
 
-  drawBubbles(frame);
+  drawBubbles(canvas);
 
-  auto pixbuf = mCamera.getFrameAsPixbuf();
+  cvtColor(canvas, canvas, cv::COLOR_BGR2RGB);
+
+  auto pixbuf = Gdk::Pixbuf::create_from_data(
+      canvas.data, Gdk::COLORSPACE_RGB, false, 8, canvas.cols, canvas.rows, canvas.step
+  );
   auto width  = Config::the().windowWidth();
   auto height = (pixbuf->get_height() * width) / pixbuf->get_width();
 
