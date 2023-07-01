@@ -7,6 +7,7 @@
 
 #include "game.hpp"
 #include "game_widget.hpp"
+#include "player.hpp"
 #include "player_score_widget.hpp"
 
 class GameWindow : public Gtk::Window {
@@ -15,8 +16,12 @@ public:
 
   virtual ~GameWindow() { }
 
+  sigc::signal<void, Player> gameOverSignal() const noexcept;
+
 private:
   void setRemainingTimeLabelText(int) noexcept;
+
+  void gameOver() noexcept;
 
   Gtk::Box mBox;
   Gtk::Box mInformationBox;
@@ -24,4 +29,6 @@ private:
   PlayerScoreWidget mPlayerTwoScore;
   Gtk::Label mRemainingTimeLabel;
   GameWidget mGameWidget;
+
+  sigc::signal<void, Player> mGameOverSignal;
 };

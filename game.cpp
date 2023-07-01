@@ -51,6 +51,11 @@ sigc::signal<void, int> Game::playerTwoScoredSignal() const noexcept
   return mPlayerTwoScoredSignal;
 }
 
+sigc::signal<void> Game::gameOverSignal() const noexcept
+{
+  return mGameOverSignal;
+}
+
 int Game::remainingTimeInSeconds() const noexcept
 {
   return mRemainingTimeInSeconds;
@@ -65,6 +70,7 @@ bool Game::decreaseRemainingTime() noexcept
 {
   if (mRemainingTimeInSeconds <= 0) {
     mRunning = false;
+    mGameOverSignal.emit();
     return false;
   }
 
@@ -125,4 +131,13 @@ void Game::floatBubbles() noexcept
   }
 
   mBubbles = newBubbles;
+}
+
+Player Game::winner() const noexcept
+{
+  if (mPlayerOne.score() > mPlayerTwo.score()) {
+    return mPlayerOne;
+  } else {
+    return mPlayerTwo;
+  }
 }

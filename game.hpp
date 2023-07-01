@@ -28,11 +28,15 @@ public:
 
   void floatBubbles() noexcept;
 
-  sigc::signal<void, int> timeDecreasedSignal() const noexcept;
+  [[nodiscard]] Player winner() const noexcept;
 
-  sigc::signal<void, int> playerOneScoredSignal() const noexcept;
+  [[nodiscard]] sigc::signal<void, int> timeDecreasedSignal() const noexcept;
 
-  sigc::signal<void, int> playerTwoScoredSignal() const noexcept;
+  [[nodiscard]] sigc::signal<void, int> playerOneScoredSignal() const noexcept;
+
+  [[nodiscard]] sigc::signal<void, int> playerTwoScoredSignal() const noexcept;
+
+  [[nodiscard]] sigc::signal<void> gameOverSignal() const noexcept;
 
 private:
   [[nodiscard]] Bubble generateRandomBubble() const noexcept;
@@ -42,7 +46,7 @@ private:
   void checkCollisionsWithPlayer(Player&, cv::RotatedRect, sigc::signal<void, int>) noexcept;
 
   bool mRunning                = true;
-  int mRemainingTimeInSeconds  = 60;
+  int mRemainingTimeInSeconds  = 30;
   std::vector<Bubble> mBubbles = {};
 
   Player mPlayerOne;
@@ -57,4 +61,6 @@ private:
 
   sigc::signal<void, int> mPlayerOneScoredSignal;
   sigc::signal<void, int> mPlayerTwoScoredSignal;
+
+  sigc::signal<void> mGameOverSignal;
 };

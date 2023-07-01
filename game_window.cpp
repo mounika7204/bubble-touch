@@ -28,6 +28,8 @@ GameWindow::GameWindow(cv::RNG& rng)
       sigc::mem_fun(mPlayerTwoScore, &PlayerScoreWidget::setPlayerScore)
   );
 
+  mGameWidget.game().gameOverSignal().connect(sigc::mem_fun(*this, &GameWindow::gameOver));
+
   mInformationBox.pack_end(mPlayerTwoScore);
   mInformationBox.pack_end(mRemainingTimeLabel);
   mInformationBox.pack_end(mPlayerOneScore);
@@ -40,8 +42,19 @@ GameWindow::GameWindow(cv::RNG& rng)
   show_all();
 }
 
+sigc::signal<void, Player> GameWindow::gameOverSignal() const noexcept
+{
+  return mGameOverSignal;
+}
+
 void GameWindow::setRemainingTimeLabelText(int remainingTimeInSeconds) noexcept
 {
   auto text = std::to_string(remainingTimeInSeconds) + "s";
   mRemainingTimeLabel.set_text(text);
+}
+
+void GameWindow::gameOver() noexcept
+{
+  mGameOverSignal.emit(mGameWidget.game().winner());
+  hide();
 }
