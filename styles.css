@@ -13,3 +13,13 @@
     color: #333;
     padding: 5px;
 }
+
+#game-over-window-box {
+    background-color: #fff;
+    color: #333;
+    padding: 10px;
+}
+
+#game-over-label {
+    font-weight: bold;
+}

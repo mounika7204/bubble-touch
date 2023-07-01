@@ -1,7 +1,9 @@
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 
 #include "bubbletouch_application.hpp"
+#include "game_over_window.hpp"
 
 BubbleTouchApplication::BubbleTouchApplication()
     : Gtk::Application("io.github.aloussase.bubbletouch")
@@ -42,14 +44,24 @@ void BubbleTouchApplication::startGame() noexcept
 
   mGameWindow = new GameWindow(mRng);
   mGameWindow->signal_hide().connect([&]() { onHideGameWindow(); });
+  mGameWindow->gameOverSignal().connect([&](Player winner) { onGameOver(winner); });
   add_window(*mGameWindow);
   mGameWindow->present();
 }
 
 void BubbleTouchApplication::onHideGameWindow() noexcept
 {
-  if (mGameWindow) {
-    delete mGameWindow;
-    mGameWindow = nullptr;
+  if (!mGameWindow) {
+    return;
   }
+
+  delete mGameWindow;
+  mGameWindow = nullptr;
+}
+
+void BubbleTouchApplication::onGameOver(Player winner) noexcept
+{
+  mGameOverWindow = std::make_optional<GameOverWindow>(winner);
+  add_window(mGameOverWindow.value());
+  mGameOverWindow->present();
 }

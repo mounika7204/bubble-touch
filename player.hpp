@@ -1,8 +1,10 @@
 #pragma once
 
+#include <string>
+
 class Player {
 public:
-  Player() = default;
+  Player(const std::string& name);
 
   void increaseScore() noexcept;
 
@@ -10,6 +12,9 @@ public:
 
   [[nodiscard]] int score() const noexcept;
 
+  [[nodiscard]] const std::string& name() const noexcept;
+
 private:
   int mScore = 0;
+  std::string mName;
 };

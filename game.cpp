@@ -5,6 +5,8 @@
 
 Game::Game(cv::RNG& rng, int nrows, int ncols)
     : mRng { rng }
+    , mPlayerOne { "Player 1" }
+    , mPlayerTwo { "Player 2" }
     , mNrows { nrows }
     , mNcols { ncols }
 {

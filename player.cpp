@@ -2,6 +2,11 @@
 
 #include "player.hpp"
 
+Player::Player(const std::string& name)
+    : mName { name }
+{
+}
+
 void Player::increaseScore() noexcept
 {
   mScore += 1;
@@ -16,4 +21,9 @@ void Player::decreaseScore() noexcept
 int Player::score() const noexcept
 {
   return mScore;
+}
+
+const std::string& Player::name() const noexcept
+{
+  return mName;
 }
