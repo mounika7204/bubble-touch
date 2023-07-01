@@ -26,6 +26,8 @@ public:
 
   void checkCollisionsWithPlayerTwo(cv::RotatedRect playerTwoMark) noexcept;
 
+  void floatBubbles() noexcept;
+
   sigc::signal<void, int> timeDecreasedSignal() const noexcept;
 
   sigc::signal<void, int> playerOneScoredSignal() const noexcept;

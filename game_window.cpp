@@ -3,6 +3,8 @@
 #include "config.hpp"
 #include "game_window.hpp"
 
+// TODO: Merge this whole class into GameWidget.
+
 GameWindow::GameWindow(cv::RNG& rng)
     : mBox { Gtk::ORIENTATION_VERTICAL }
     , mInformationBox { Gtk::ORIENTATION_HORIZONTAL }

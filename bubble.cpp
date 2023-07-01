@@ -47,3 +47,8 @@ cv::RotatedRect Bubble::asRotatedRect() const noexcept
     0,
   };
 }
+
+void Bubble::floatUp() noexcept
+{
+  mYpos -= 3;
+}

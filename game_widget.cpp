@@ -55,6 +55,8 @@ void GameWidget::update() noexcept
   if (mPlayerTwoMark) {
     mGame->checkCollisionsWithPlayerTwo(mPlayerTwoMark.value());
   }
+
+  mGame->floatBubbles();
 }
 
 void GameWidget::draw() noexcept

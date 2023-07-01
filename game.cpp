@@ -11,7 +11,7 @@ Game::Game(cv::RNG& rng, int nrows, int ncols)
   auto timeoutSlot   = sigc::mem_fun(*this, &Game::decreaseRemainingTime);
   mTimeoutConnection = Glib::signal_timeout().connect(timeoutSlot, 1000);
 
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < 8; i++) {
     mBubbles.push_back(generateRandomBubble());
   }
 }
@@ -105,6 +105,22 @@ void Game::checkCollisionsWithPlayer(
       newBubbles.push_back(generateRandomBubble());
     } else {
       newBubbles.push_back(bubble);
+    }
+  }
+
+  mBubbles = newBubbles;
+}
+
+void Game::floatBubbles() noexcept
+{
+  std::vector<Bubble> newBubbles;
+
+  for (auto& bubble : mBubbles) {
+    bubble.floatUp();
+    if (bubble.y() + bubble.radius() >= 0) {
+      newBubbles.push_back(bubble);
+    } else {
+      newBubbles.push_back(generateRandomBubble());
     }
   }
 

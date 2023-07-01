@@ -14,6 +14,9 @@ public:
 
   [[nodiscard]] int y() const noexcept;
 
+  /// Make the bubble float upward.
+  void floatUp() noexcept;
+
   [[nodiscard]] int radius() const noexcept;
 
   [[nodiscard]] cv::Scalar color() const noexcept;
