@@ -13,6 +13,9 @@ InitialWindow::InitialWindow()
 {
   set_title("BubbleTouch");
   set_default_size(Config::the().windowWidth(), Config::the().windowHeight());
+  set_resizable(false);
+
+  set_name("initial-window");
 
   auto pixbuf = Gdk::Pixbuf::create_from_file(Config::the().startScreenImageFile());
   auto height = Config::the().windowHeight();
@@ -26,6 +29,8 @@ InitialWindow::InitialWindow()
   mExitButton.signal_clicked().connect([&]() { mExitSignal.emit(); });
   mStartButton.signal_clicked().connect([&]() { mStartSignal.emit(); });
 
+  mButtonBox.set_name("initial-window-button-box");
+
   mButtonBox.set_vexpand(false);
   mButtonBox.set_valign(Gtk::Align::ALIGN_CENTER);
   mButtonBox.set_halign(Gtk::Align::ALIGN_CENTER);
@@ -34,6 +39,7 @@ InitialWindow::InitialWindow()
   mButtonBox.pack_end(mStartButton);
   mButtonBox.pack_end(mLabel);
 
+  mBox.set_name("initial-window-box");
   mBox.pack_start(mImage);
   mBox.pack_start(mButtonBox);
 

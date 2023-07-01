@@ -1,0 +1,15 @@
+#initial-window-box, #initial-window-button-box {
+    color: #333;
+    background-color: #fff;
+}
+
+#initial-window-button-box label {
+    font-size: 18px;
+}
+
+#game-window-info-box {
+    font-size: 18px;
+    background-color: #fff;
+    color: #333;
+    padding: 5px;
+}
