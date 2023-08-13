@@ -10,7 +10,7 @@ IndentWidth: 2
 BreakConstructorInitializers: BeforeComma
 BinPackArguments: false
 BinPackParameters: false
-AlignAfterOpenBracket: BlockIndent
+# AlignAfterOpenBracket: BlockIndent
 AlwaysBreakTemplateDeclarations: Yes
 ColumnLimit: 100
 AllowShortEnumsOnASingleLine: true

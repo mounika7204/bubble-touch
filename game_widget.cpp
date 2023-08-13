@@ -9,15 +9,14 @@
 
 GameWidget::GameWidget(cv::RNG& rng)
     : Gtk::Box {}
-    , mPlayerOneMarkDetection(
-          Config::the().playerOne().minHsv(), Config::the().playerOne().maxHsv()
-      )
-    , mPlayerTwoMarkDetection(
-          Config::the().playerTwo().minHsv(), Config::the().playerTwo().maxHsv()
-      )
 {
   assert(mCamera.open() && "failed to open camera");
   assert(mCamera.read() && "failed to read first frame");
+
+  auto& config = Config::the();
+
+  mPlayerOneMarkDetection = { config.playerOne().minHsv(), config.playerOne().maxHsv() };
+  mPlayerTwoMarkDetection = { config.playerTwo().minHsv(), config.playerTwo().maxHsv() };
 
   mImageBox.pack_start(mImage);
   add(mImageBox);
@@ -61,34 +60,44 @@ void GameWidget::update() noexcept
 
 void GameWidget::draw() noexcept
 {
-  auto& frame = mCamera.frame();
-  cv::Mat canvas(frame.rows, frame.cols, frame.type(), cv::Scalar(255, 255, 255));
+  auto& config = Config::the();
+  auto canvas  = mCamera.frame().clone();
 
-  if (mPlayerOneMark) {
-    drawRotatedRect(canvas, Config::the().playerOne().color(), mPlayerOneMark.value());
+  if (config.fake_background()) {
+    canvas = cv::Mat(canvas.rows, canvas.cols, canvas.type(), cv::Scalar(255, 255, 255));
   }
 
-  if (mPlayerTwoMark) {
-    drawRotatedRect(canvas, Config::the().playerTwo().color(), mPlayerTwoMark.value());
+  if (mPlayerOneMark && config.show_markers()) {
+    drawRotatedRect(canvas, config.playerOne().color(), mPlayerOneMark.value());
+  }
+
+  if (mPlayerTwoMark && config.show_markers()) {
+    drawRotatedRect(canvas, config.playerTwo().color(), mPlayerTwoMark.value());
   }
 
   drawBubbles(canvas);
 
   cvtColor(canvas, canvas, cv::COLOR_BGR2RGB);
 
-  auto pixbuf = Gdk::Pixbuf::create_from_data(
-      canvas.data, Gdk::COLORSPACE_RGB, false, 8, canvas.cols, canvas.rows, canvas.step
+  auto pixbuf = Gdk::Pixbuf::create_from_data(canvas.data, //
+      Gdk::COLORSPACE_RGB,
+      false,
+      8,
+      canvas.cols,
+      canvas.rows,
+      canvas.step //
   );
-  auto width  = Config::the().windowWidth();
+  auto width  = config.windowWidth();
   auto height = (pixbuf->get_height() * width) / pixbuf->get_width();
 
   pixbuf = pixbuf->scale_simple(width, height, Gdk::INTERP_BILINEAR);
   mImage.set(pixbuf->flip());
 }
 
-void GameWidget::drawRotatedRect(
-    cv::Mat& frame, const cv::Scalar& color, cv::RotatedRect& rect
-) noexcept
+void GameWidget::drawRotatedRect( //
+    cv::Mat& frame,
+    const cv::Scalar& color,
+    cv::RotatedRect& rect) noexcept
 {
   cv::Point2f vertices2f[4];
   rect.points(vertices2f);

@@ -58,6 +58,14 @@ Config::Config()
   if (root["playerTwo"]) {
     mPlayerTwoConfig = parsePlayerConfig(root["playerTwo"]);
   }
+
+  if (root["fake_background"]) {
+    m_fake_background = root["fake_background"].as<bool>();
+  }
+
+  if (root["show_markers"]) {
+    m_show_markers = root["show_markers"].as<bool>();
+  }
 }
 
 std::optional<std::string> Config::findConfigFile() noexcept
@@ -128,4 +136,14 @@ const PlayerConfig& Config::playerOne() const noexcept
 const PlayerConfig& Config::playerTwo() const noexcept
 {
   return mPlayerTwoConfig;
+}
+
+bool Config::fake_background() const noexcept
+{
+  return m_fake_background;
+}
+
+bool Config::show_markers() const noexcept
+{
+  return m_show_markers;
 }

@@ -17,3 +17,5 @@ playerTwo:
   hue:
     min: 159
     max: 180
+fake_background: false
+show_markers: false

@@ -35,6 +35,10 @@ public:
 
   [[nodiscard]] const PlayerConfig& playerTwo() const noexcept;
 
+  [[nodiscard]] bool fake_background() const noexcept;
+
+  [[nodiscard]] bool show_markers() const noexcept;
+
 private:
   Config();
 
@@ -49,4 +53,7 @@ private:
 
   PlayerConfig mPlayerOneConfig;
   PlayerConfig mPlayerTwoConfig;
+
+  bool m_fake_background = false;
+  bool m_show_markers    = false;
 };
