@@ -1,6 +1,7 @@
 # BubbleTouch
 
 ![demo](./assets/bubbletouch-demo.gif)
+_(The gif looks crappy but the game runs smoothly.)_
 
 An interactive 2-player game where players move a colored mark to burst bubbles
 that appear on screen. The player to pop the most bubbles wins!
