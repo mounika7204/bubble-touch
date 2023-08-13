@@ -1,6 +1,6 @@
 # BubbleTouch
 
-![demo](./assets/bubbletouch.mp4)
+![demo](./assets/demo.mp4)
 
 An interactive 2-player game where players move a colored mark to burst bubbles
 that appear on screen. The player to pop the most bubbles wins!
