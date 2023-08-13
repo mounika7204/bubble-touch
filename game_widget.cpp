@@ -82,12 +82,12 @@ void GameWidget::draw() noexcept
 
   if (mPlayerOneMark) {
     auto rect = mPlayerOneMark.value().boundingRect();
-    draw_player_label(canvas, rect, "Player 1");
+    draw_player_label(canvas, rect, mGame->playerOne().name());
   }
 
   if (mPlayerTwoMark) {
     auto rect = mPlayerTwoMark.value().boundingRect();
-    draw_player_label(canvas, rect, "Player 2");
+    draw_player_label(canvas, rect, mGame->playerTwo().name());
   }
 
   cvtColor(canvas, canvas, cv::COLOR_BGR2RGB);
@@ -139,11 +139,19 @@ void GameWidget::draw_player_label( //
     const std::string& label) noexcept
 {
   // This is for the original image.
-  // We need to calculate the correct position in the rotated image.
+  // We need to calculate the correct position in the flipped image.
   auto p    = r.tl();
   auto w    = canvas.cols;
   auto mid  = w / 2;
   auto diff = std::abs(mid - p.x);
   auto x    = p.x > mid ? mid - diff : mid + diff;
-  cv::putText(canvas, label, { x, p.y }, cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar::all(0));
+  cv::putText( //
+      canvas,
+      label,
+      { x, p.y },
+      cv::FONT_HERSHEY_SIMPLEX,
+      0.5,                // The font scale
+      cv::Scalar::all(0), // The font color
+      2                   // The line thickness
+  );
 }

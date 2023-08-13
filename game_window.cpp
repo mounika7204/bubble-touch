@@ -17,17 +17,14 @@ GameWindow::GameWindow(cv::RNG& rng)
   set_resizable(false);
 
   mGameWidget.game().timeDecreasedSignal().connect(
-      sigc::mem_fun(*this, &GameWindow::setRemainingTimeLabelText)
-  );
+      sigc::mem_fun(*this, &GameWindow::setRemainingTimeLabelText));
   setRemainingTimeLabelText(mGameWidget.game().remainingTimeInSeconds());
 
   mGameWidget.game().playerOneScoredSignal().connect(
-      sigc::mem_fun(mPlayerOneScore, &PlayerScoreWidget::setPlayerScore)
-  );
+      sigc::mem_fun(mPlayerOneScore, &PlayerScoreWidget::setPlayerScore));
 
   mGameWidget.game().playerTwoScoredSignal().connect(
-      sigc::mem_fun(mPlayerTwoScore, &PlayerScoreWidget::setPlayerScore)
-  );
+      sigc::mem_fun(mPlayerTwoScore, &PlayerScoreWidget::setPlayerScore));
 
   mGameWidget.game().gameOverSignal().connect(sigc::mem_fun(*this, &GameWindow::gameOver));
 
