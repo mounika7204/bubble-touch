@@ -4,6 +4,8 @@ project(BubbleTouch
     LANGUAGES CXX
     DESCRIPTION "An interactive game where players compete to pop bubbles.")
 
+set(CMAKE_CXX_STANDARD 20)
+
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTKMM gtkmm-3.0)
 
