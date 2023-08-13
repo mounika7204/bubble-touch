@@ -26,7 +26,8 @@ add_executable(bubbletouch
     config.cpp
     bubble.cpp
     player.cpp
-    game_over_window.cpp)
+    game_over_window.cpp
+    particle.cpp)
 target_include_directories(bubbletouch PRIVATE 
     ${GTKMM_INCLUDE_DIRS} 
     ${OpenCV_INCLUDE_DIRS})

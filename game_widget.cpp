@@ -23,7 +23,14 @@ GameWidget::GameWidget(cv::RNG& rng)
 
   mGame = std::make_unique<Game>(rng, mCamera.frame().rows, mCamera.frame().cols);
 
-  add_tick_callback([&](const Glib::RefPtr<Gdk::FrameClock>&) { return onFrame(); });
+  add_tick_callback([&](const Glib::RefPtr<Gdk::FrameClock>& clock) {
+    // This shit is in microseconds.
+    double current_frame_time = clock->get_frame_time();
+    double dt                 = (current_frame_time - m_last_frame_time) / 1'000'000;
+    auto result               = onFrame(dt);
+    m_last_frame_time         = current_frame_time;
+    return result;
+  });
 }
 
 const Game& GameWidget::game() const noexcept
@@ -31,15 +38,15 @@ const Game& GameWidget::game() const noexcept
   return *mGame;
 }
 
-bool GameWidget::onFrame() noexcept
+bool GameWidget::onFrame(double dt) noexcept
 {
-  update();
+  update(dt);
   draw();
   queue_resize();
   return true;
 }
 
-void GameWidget::update() noexcept
+void GameWidget::update(double dt) noexcept
 {
   assert(mCamera.isOpen() && "camera is not opened");
   assert(mCamera.read() && "failed to read camera frame");
@@ -56,6 +63,7 @@ void GameWidget::update() noexcept
   }
 
   mGame->floatBubbles();
+  mGame->update_particles(dt);
 }
 
 void GameWidget::draw() noexcept
@@ -76,6 +84,7 @@ void GameWidget::draw() noexcept
   }
 
   drawBubbles(canvas);
+  draw_particles(canvas);
 
   // Flip around x-axis for display purposes.
   cv::flip(canvas, canvas, 1);
@@ -154,4 +163,11 @@ void GameWidget::draw_player_label( //
       cv::Scalar::all(0), // The font color
       2                   // The line thickness
   );
+}
+
+void GameWidget::draw_particles(cv::Mat& canvas) noexcept
+{
+  for (const auto& particle : mGame->particles()) {
+    cv::circle(canvas, particle.pos, particle.size, particle.color, -1);
+  }
 }
