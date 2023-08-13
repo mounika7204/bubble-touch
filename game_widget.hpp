@@ -28,6 +28,8 @@ private:
 
   void drawBubbles(cv::Mat& frame) noexcept;
 
+  void draw_player_label(cv::Mat&, const cv::Rect&, const std::string&) noexcept;
+
   VideoCamera mCamera;
 
   std::optional<cv::RotatedRect> mPlayerOneMark;

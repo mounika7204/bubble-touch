@@ -77,6 +77,19 @@ void GameWidget::draw() noexcept
 
   drawBubbles(canvas);
 
+  // Flip around x-axis for display purposes.
+  cv::flip(canvas, canvas, 1);
+
+  if (mPlayerOneMark) {
+    auto rect = mPlayerOneMark.value().boundingRect();
+    draw_player_label(canvas, rect, "Player 1");
+  }
+
+  if (mPlayerTwoMark) {
+    auto rect = mPlayerTwoMark.value().boundingRect();
+    draw_player_label(canvas, rect, "Player 2");
+  }
+
   cvtColor(canvas, canvas, cv::COLOR_BGR2RGB);
 
   auto pixbuf = Gdk::Pixbuf::create_from_data(canvas.data, //
@@ -87,11 +100,13 @@ void GameWidget::draw() noexcept
       canvas.rows,
       canvas.step //
   );
+
   auto width  = config.windowWidth();
   auto height = (pixbuf->get_height() * width) / pixbuf->get_width();
 
   pixbuf = pixbuf->scale_simple(width, height, Gdk::INTERP_BILINEAR);
-  mImage.set(pixbuf->flip());
+
+  mImage.set(pixbuf);
 }
 
 void GameWidget::drawRotatedRect( //
@@ -116,4 +131,19 @@ void GameWidget::drawBubbles(cv::Mat& frame) noexcept
   for (auto& bubble : bubbles) {
     cv::circle(frame, cv::Point(bubble.x(), bubble.y()), bubble.radius(), bubble.color(), -1);
   }
+}
+
+void GameWidget::draw_player_label( //
+    cv::Mat& canvas,                //
+    const cv::Rect& r,
+    const std::string& label) noexcept
+{
+  // This is for the original image.
+  // We need to calculate the correct position in the rotated image.
+  auto p    = r.tl();
+  auto w    = canvas.cols;
+  auto mid  = w / 2;
+  auto diff = std::abs(mid - p.x);
+  auto x    = p.x > mid ? mid - diff : mid + diff;
+  cv::putText(canvas, label, { x, p.y }, cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar::all(0));
 }
