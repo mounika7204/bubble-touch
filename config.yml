@@ -1,7 +1,7 @@
 window:
   height: 500
   width: 800
-playerOne:
+player_one:
   color:
     red: 0
     green: 0
@@ -9,7 +9,7 @@ playerOne:
   hue:
     min: 90
     max: 128
-playerTwo:
+player_two:
   color:
     red: 255
     green: 0
@@ -18,4 +18,4 @@ playerTwo:
     min: 159
     max: 180
 fake_background: true
-show_markers: false
+show_markers: true

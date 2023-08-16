@@ -41,8 +41,6 @@ Config::Config()
       cv::Scalar(0, 255, 0), cv::Scalar(36, 50, 70), cv::Scalar(89, 255, 255)
     }
 {
-  reload();
-
   if (auto config_file = find_config_file(); config_file) {
     m_config_watcher.watch(config_file->c_str(), [this] { reload(); });
   }
@@ -66,6 +64,7 @@ void Config::reload() noexcept
 
   auto root = YAML::LoadFile(config_file.value());
   if (!root) {
+    std::cerr << "Failed to parse config file\n";
     return;
   }
 
