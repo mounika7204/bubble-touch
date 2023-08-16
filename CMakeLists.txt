@@ -6,13 +6,13 @@ project(BubbleTouch
 
 set(CMAKE_CXX_STANDARD 20)
 
+# System dependencies
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTKMM gtkmm-3.0)
-
 find_package(OpenCV REQUIRED)
-
 find_package(OpenSSL)
 
+# Bundled dependencies
 add_subdirectory(third_party/yaml-cpp)
 
 add_executable(bubbletouch
@@ -31,6 +31,9 @@ add_executable(bubbletouch
         game_over_window.cpp
         particle.cpp
         file_watcher.cpp)
+
+target_compile_options(bubbletouch PRIVATE
+        -Wall -Wextra)
 
 target_include_directories(bubbletouch PRIVATE
         ${GTKMM_INCLUDE_DIRS}
