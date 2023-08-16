@@ -13,8 +13,7 @@ BubbleTouchApplication::BubbleTouchApplication()
     auto cssProvider = Gtk::CssProvider::create();
     cssProvider->load_from_path("./styles.css");
     Gtk::StyleContext::add_provider_for_screen(
-        Gdk::Screen::get_default(), cssProvider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION
-    );
+        Gdk::Screen::get_default(), cssProvider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
   } catch (const Gtk::CssProviderError&) {
     std::cerr << "error: failed to create css provider"
               << ", make sure there is a 'styles.css' in the project root\n";

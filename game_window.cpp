@@ -13,7 +13,7 @@ GameWindow::GameWindow(cv::RNG& rng)
     , mGameWidget { rng }
 {
   set_title("BubbleTouch Game");
-  set_default_size(Config::the().windowWidth(), Config::the().windowHeight());
+  set_default_size(Config::the().window_width(), Config::the().window_height());
   set_resizable(false);
 
   mGameWidget.game().timeDecreasedSignal().connect(

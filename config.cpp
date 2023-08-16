@@ -1,62 +1,85 @@
 #include <cstdlib>
 #include <iostream>
+#include <utility>
 
 #include <yaml-cpp/yaml.h>
 
 #include "config.hpp"
+#include "file_watcher.hpp"
 
-PlayerConfig::PlayerConfig(cv::Scalar color, cv::Scalar minHsv, cv::Scalar maxHsv)
-    : mColor { color }
-    , mMinHsv { minHsv }
-    , mMaxHsv { maxHsv }
+Player_Config::Player_Config(cv::Scalar color, cv::Scalar minHsv, cv::Scalar maxHsv)
+    : m_color { std::move(color) }
+    , m_min_hsv { std::move(minHsv) }
+    , m_max_hsv { std::move(maxHsv) }
 {
 }
 
-cv::Scalar PlayerConfig::color() const noexcept
+cv::Scalar Player_Config::color() const noexcept
 {
-  return mColor;
+  return m_color;
 }
 
-cv::Scalar PlayerConfig::minHsv() const noexcept
+cv::Scalar Player_Config::min_hsv() const noexcept
 {
-  return mMinHsv;
+  return m_min_hsv;
 }
 
-cv::Scalar PlayerConfig::maxHsv() const noexcept
+cv::Scalar Player_Config::max_hsv() const noexcept
 {
-  return mMaxHsv;
+  return m_max_hsv;
 }
 
 Config* Config::instance = nullptr;
 
 Config::Config()
-    : mWindowHeight { 500 }
-    , mWindowWidth { 800 }
-    , mPlayerOneConfig { cv::Scalar(255, 0, 0), cv::Scalar(90, 50, 70), cv::Scalar(128, 255, 255) }
-    , mPlayerTwoConfig { cv::Scalar(0, 255, 0), cv::Scalar(36, 50, 70), cv::Scalar(89, 255, 255) }
+    : m_window_height { 500 }
+    , m_window_width { 800 }
+    , m_player_one_config { cv::Scalar(255, 0, 0),
+      cv::Scalar(90, 50, 70),
+      cv::Scalar(128, 255, 255) }
+    , m_player_two_config {
+      cv::Scalar(0, 255, 0), cv::Scalar(36, 50, 70), cv::Scalar(89, 255, 255)
+    }
 {
-  auto configFile = findConfigFile();
-  if (!configFile) {
+  reload();
+
+  if (auto config_file = find_config_file(); config_file) {
+    m_config_watcher.watch(config_file->c_str(), [this] { reload(); });
+  }
+}
+
+Config::~Config()
+{
+  m_config_watcher.cancel();
+}
+
+void Config::reload() noexcept
+{
+  std::lock_guard lock { m_condomn };
+
+  auto config_file = find_config_file();
+  if (!config_file) {
     return;
   }
 
-  auto root = YAML::LoadFile(configFile.value());
+  std::cout << "Loading config file: " << *config_file << "\n";
+
+  auto root = YAML::LoadFile(config_file.value());
   if (!root) {
     return;
   }
 
   if (root["window"]) {
-    // TODO: Add validation.
-    mWindowHeight = root["window"]["height"].as<int>();
-    mWindowWidth  = root["window"]["width"].as<int>();
+    m_window_height = root["window"]["height"].as<int>();
+    m_window_width  = root["window"]["width"].as<int>();
   }
 
-  if (root["playerOne"]) {
-    mPlayerOneConfig = parsePlayerConfig(root["playerOne"]);
+  if (root["player_one"]) {
+    m_player_one_config = parse_player_config(root["player_one"]);
   }
 
-  if (root["playerTwo"]) {
-    mPlayerTwoConfig = parsePlayerConfig(root["playerTwo"]);
+  if (root["player_two"]) {
+    m_player_two_config = parse_player_config(root["player_two"]);
   }
 
   if (root["fake_background"]) {
@@ -68,13 +91,13 @@ Config::Config()
   }
 }
 
-std::optional<std::string> Config::findConfigFile() noexcept
+std::optional<std::string> Config::find_config_file() noexcept
 {
   // TODO: Resolve this.
   return "config.yml";
 }
 
-PlayerConfig Config::parsePlayerConfig(const YAML::Node& node) noexcept
+Player_Config Config::parse_player_config(const YAML::Node& node) noexcept
 {
   auto color = node["color"];
   if (!color) {
@@ -97,7 +120,7 @@ PlayerConfig Config::parsePlayerConfig(const YAML::Node& node) noexcept
   auto playerMinHsv = cv::Scalar { hue["min"].as<double>(), 50, 70 };
   auto playerMaxHsv = cv::Scalar { hue["max"].as<double>(), 255, 255 };
 
-  return PlayerConfig {
+  return Player_Config {
     playerColor,
     playerMinHsv,
     playerMaxHsv,
@@ -113,29 +136,29 @@ Config& Config::the()
   return *instance;
 }
 
-int Config::windowHeight() const noexcept
+int Config::window_height() const noexcept
 {
-  return mWindowHeight;
+  return m_window_height;
 }
 
-int Config::windowWidth() const noexcept
+int Config::window_width() const noexcept
 {
-  return mWindowWidth;
+  return m_window_width;
 }
 
-std::string Config::startScreenImageFile() const noexcept
+std::string Config::start_screen_image_file() const noexcept
 {
   return "assets/startscreen.png";
 }
 
-const PlayerConfig& Config::playerOne() const noexcept
+const Player_Config& Config::player_one() const noexcept
 {
-  return mPlayerOneConfig;
+  return m_player_one_config;
 }
 
-const PlayerConfig& Config::playerTwo() const noexcept
+const Player_Config& Config::player_two() const noexcept
 {
-  return mPlayerTwoConfig;
+  return m_player_two_config;
 }
 
 bool Config::fake_background() const noexcept

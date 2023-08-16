@@ -12,13 +12,13 @@ InitialWindow::InitialWindow()
     , mLabel("¡Haz clic para empezar!")
 {
   set_title("BubbleTouch");
-  set_default_size(Config::the().windowWidth(), Config::the().windowHeight());
+  set_default_size(Config::the().window_width(), Config::the().window_height());
   set_resizable(false);
 
   set_name("initial-window");
 
-  auto pixbuf = Gdk::Pixbuf::create_from_file(Config::the().startScreenImageFile());
-  auto height = Config::the().windowHeight();
+  auto pixbuf = Gdk::Pixbuf::create_from_file(Config::the().start_screen_image_file());
+  auto height = Config::the().window_height();
   auto width  = (pixbuf->get_width() * height) / pixbuf->get_height();
   pixbuf      = pixbuf->scale_simple(width, height, Gdk::INTERP_BILINEAR);
   mImage.set(pixbuf);

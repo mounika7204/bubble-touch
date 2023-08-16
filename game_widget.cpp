@@ -15,8 +15,8 @@ GameWidget::GameWidget(cv::RNG& rng)
 
   auto& config = Config::the();
 
-  mPlayerOneMarkDetection = { config.playerOne().minHsv(), config.playerOne().maxHsv() };
-  mPlayerTwoMarkDetection = { config.playerTwo().minHsv(), config.playerTwo().maxHsv() };
+  mPlayerOneMarkDetection = { config.player_one().min_hsv(), config.player_one().max_hsv() };
+  mPlayerTwoMarkDetection = { config.player_two().min_hsv(), config.player_two().max_hsv() };
 
   mImageBox.pack_start(mImage);
   add(mImageBox);
@@ -76,11 +76,11 @@ void GameWidget::draw() noexcept
   }
 
   if (mPlayerOneMark && config.show_markers()) {
-    drawRotatedRect(canvas, config.playerOne().color(), mPlayerOneMark.value());
+    drawRotatedRect(canvas, config.player_one().color(), mPlayerOneMark.value());
   }
 
   if (mPlayerTwoMark && config.show_markers()) {
-    drawRotatedRect(canvas, config.playerTwo().color(), mPlayerTwoMark.value());
+    drawRotatedRect(canvas, config.player_two().color(), mPlayerTwoMark.value());
   }
 
   drawBubbles(canvas);
@@ -110,7 +110,7 @@ void GameWidget::draw() noexcept
       canvas.step //
   );
 
-  auto width  = config.windowWidth();
+  auto width  = config.window_width();
   auto height = (pixbuf->get_height() * width) / pixbuf->get_width();
 
   pixbuf = pixbuf->scale_simple(width, height, Gdk::INTERP_BILINEAR);

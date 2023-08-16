@@ -1,39 +1,44 @@
 #pragma once
 
 #include <optional>
+#include <thread>
 
 #include <opencv2/core.hpp>
 #include <yaml-cpp/yaml.h>
 
-class PlayerConfig {
+#include "file_watcher.hpp"
+
+class Player_Config {
 public:
-  PlayerConfig(cv::Scalar color, cv::Scalar minHsv, cv::Scalar maxHsv);
+  Player_Config(cv::Scalar color, cv::Scalar minHsv, cv::Scalar maxHsv);
 
   [[nodiscard]] cv::Scalar color() const noexcept;
 
-  [[nodiscard]] cv::Scalar minHsv() const noexcept;
+  [[nodiscard]] cv::Scalar min_hsv() const noexcept;
 
-  [[nodiscard]] cv::Scalar maxHsv() const noexcept;
+  [[nodiscard]] cv::Scalar max_hsv() const noexcept;
 
 private:
-  cv::Scalar mColor;
-  cv::Scalar mMinHsv;
-  cv::Scalar mMaxHsv;
+  cv::Scalar m_color;
+  cv::Scalar m_min_hsv;
+  cv::Scalar m_max_hsv;
 };
 
 class Config final {
 public:
   static Config& the();
 
-  [[nodiscard]] int windowHeight() const noexcept;
+  ~Config();
 
-  [[nodiscard]] int windowWidth() const noexcept;
+  [[nodiscard]] int window_height() const noexcept;
 
-  [[nodiscard]] std::string startScreenImageFile() const noexcept;
+  [[nodiscard]] int window_width() const noexcept;
 
-  [[nodiscard]] const PlayerConfig& playerOne() const noexcept;
+  [[nodiscard]] std::string start_screen_image_file() const noexcept;
 
-  [[nodiscard]] const PlayerConfig& playerTwo() const noexcept;
+  [[nodiscard]] const Player_Config& player_one() const noexcept;
+
+  [[nodiscard]] const Player_Config& player_two() const noexcept;
 
   [[nodiscard]] bool fake_background() const noexcept;
 
@@ -42,18 +47,26 @@ public:
 private:
   Config();
 
-  std::optional<std::string> findConfigFile() noexcept;
+  /// Resolve the path to the configuration file.
+  std::optional<std::string> find_config_file() noexcept;
 
-  PlayerConfig parsePlayerConfig(const YAML::Node& node) noexcept;
+  /// Parse and return a Player_Config.
+  Player_Config parse_player_config(const YAML::Node& node) noexcept;
+
+  /// Reload the configuration.
+  void reload() noexcept;
 
   static Config* instance;
 
-  int mWindowHeight;
-  int mWindowWidth;
+  int m_window_height;
+  int m_window_width;
 
-  PlayerConfig mPlayerOneConfig;
-  PlayerConfig mPlayerTwoConfig;
+  Player_Config m_player_one_config;
+  Player_Config m_player_two_config;
 
   bool m_fake_background = false;
   bool m_show_markers    = false;
+
+  std::mutex m_condomn          = {};
+  File_Watcher m_config_watcher = {};
 };
