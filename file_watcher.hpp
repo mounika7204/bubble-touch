@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <fcntl.h>
 #include <string.h>
 #include <sys/mman.h>
@@ -42,12 +43,12 @@ public:
         ) //
     );
 
+    close(fd);
+
     if (m_data == MAP_FAILED) {
       fprintf(stderr, "Failed to map config file: %s", strerror(errno));
       return;
     }
-
-    close(fd);
 
     std::thread([this, cb, refresh_rate] {
       char last_hash[MD5_DIGEST_LENGTH]    = { 0 };
